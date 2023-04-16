@@ -9,11 +9,11 @@ contract SubjectAttribute {
     struct Subject{
         SubjectState state;
         string manufacturer;
-        string current_location;
-        string vehicle_type;
-        string owner_name;
-        string license_plate;
-        string energy_capacity;
+        string currentLocation;
+        string vehicleType;
+        string ownerName;
+        string licensePlate;
+        string energyCapacity;
         uint256 ToMFR;
     }
 
@@ -58,6 +58,7 @@ contract SubjectAttribute {
     event SubjectChanged(address sub_addr);
     event Adde(address []ev_manufacturers);
     event Addde(address []ev_manufacturers);
+    event GetSubject(string manufacturer,string currentLocation,string vehicleType,string ownerName,string licensePlate,string energyCapacity);
 
     // FUNCTIONS
     constructor()
@@ -69,7 +70,7 @@ contract SubjectAttribute {
     }
     
     // Adds a new subject with given attributes:
-    // manufacturer, current_location, vehicle_type, charging_efficiency, discharging_efficiency, energy_capacity, ToMFR
+    // manufacturer, currentLocation, vehicleType, charging_efficiency, discharging_efficiency, energyCapacity, ToMFR
     // Emits NewSubjectAdded event with the sub_addr and manufacturer
     function subject_add(
         /**SUBJECT ATTRIBUTES**/
@@ -84,11 +85,11 @@ contract SubjectAttribute {
         subjects[sub_addr].state = SubjectState.Active;
         // ADD SUBJECT ATTRIBS
         subjects[sub_addr].manufacturer = sub_arg[0];
-        subjects[sub_addr].current_location = sub_arg[1];
-        subjects[sub_addr].vehicle_type = sub_arg[2];
-        subjects[sub_addr].owner_name = sub_arg[3];
-        subjects[sub_addr].license_plate = sub_arg[4];
-        subjects[sub_addr].energy_capacity = sub_arg[5];
+        subjects[sub_addr].currentLocation = sub_arg[1];
+        subjects[sub_addr].vehicleType = sub_arg[2];
+        subjects[sub_addr].ownerName = sub_arg[3];
+        subjects[sub_addr].licensePlate = sub_arg[4];
+        subjects[sub_addr].energyCapacity = sub_arg[5];
         subjects[sub_addr].ToMFR = 0;
         // ADD SUBJECT TO BLOOMFILTER
         // add_bitmap(sub_addr);
@@ -200,15 +201,15 @@ contract SubjectAttribute {
         bytes memory empty_test = bytes(sub_arg[0]);
         if (empty_test.length != 0) subjects[sub_addr].manufacturer = sub_arg[0];
         empty_test = bytes(sub_arg[1]);
-        if (empty_test.length != 0) subjects[sub_addr].current_location = sub_arg[1];
+        if (empty_test.length != 0) subjects[sub_addr].currentLocation = sub_arg[1];
         empty_test = bytes(sub_arg[2]);
-        if (empty_test.length != 0) subjects[sub_addr].vehicle_type = sub_arg[2];
+        if (empty_test.length != 0) subjects[sub_addr].vehicleType = sub_arg[2];
         empty_test = bytes(sub_arg[3]);
-        if (empty_test.length != 0) subjects[sub_addr].owner_name = sub_arg[3];
+        if (empty_test.length != 0) subjects[sub_addr].ownerName = sub_arg[3];
         empty_test = bytes(sub_arg[4]);
-        if (empty_test.length != 0) subjects[sub_addr].license_plate = sub_arg[4];
+        if (empty_test.length != 0) subjects[sub_addr].licensePlate = sub_arg[4];
         empty_test = bytes(sub_arg[5]);
-        if (empty_test.length != 0) subjects[sub_addr].energy_capacity = sub_arg[5];
+        if (empty_test.length != 0) subjects[sub_addr].energyCapacity = sub_arg[5];
         emit SubjectChanged(sub_addr);
     }
 
@@ -235,6 +236,15 @@ contract SubjectAttribute {
     {
         ev_manufacturers.push(ev_man);
         emit Addde(ev_manufacturers);
+    }
+
+
+    function get_ev(
+        address sub_adr
+    )
+        public
+    {
+        emit GetSubject(subjects[sub_adr].manufacturer,subjects[sub_adr].currentLocation,subjects[sub_adr].vehicleType,subjects[sub_adr].ownerName,subjects[sub_adr].licensePlate,subjects[sub_adr].energyCapacity);
     }
 
     // function get_subjects(address sub_addr) public{

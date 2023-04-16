@@ -417,6 +417,7 @@ class BloomACCRunner {
     );
     console.log("[SUCCESS] Connected to deployed network...");
     await this.access_control(this.subjects[0],this.objects[0],0,"Charge Point, 3650 Airport");    
+    await this.access_control(this.subjects[0],this.objects[0],0,"Charge Point, 3650 Airport");    
   }
 
   async setAccessToken(){
@@ -633,7 +634,7 @@ class BloomACCRunner {
     // console.log(`Sent access request for subject address: 0x...${sub_addr.slice(-4)}, object address: 0x...${obj_addr.slice(-4)} and action: ${action}`);
     // console.log(tx_receipt2.logs);
       const tx=await this.acc_contract.methods.access_control(obj_addr, action).send({from:sub_addr,gas:500000});
-      console.log(tx.events.AccessDenied);
+      console.log(tx.events);
     }
     catch(err){
       console.log(`[ERROR] Subject with address (0x...${sub_addr.slice(-4)}) does not exist.\nOr ${err}\nOr make sure you have permissions to change attributes...`);

@@ -91,16 +91,47 @@ exports.accessControl = (req,res,next)=>{
     
 };
 
-exports.addPolicy = (req,res,next)=>{
-    let {sub_address,
-        obj_address,
+exports.addPolicy = async(req,res,next)=>{
+    let {subAddress,
+        objAddress,
         read,
         write,
         execute,
-        min_interval,
-        start_time,
-        end_time
+        minInterval,
+        startTime,
+        endTime
     } = req.body;
 
-    
+    let sub_values=await BloomACCRunner.sac_contract.methods.get_ev(subAddress).send({from:BloomACCRunner.accounts[0],gas:500000})
+
+    // console.log(sub_values.events.GetSubject.returnValues);
+    let policy="";
+    let{
+        manufacturer,
+        currentLocation,
+        vehicleType,
+        ownerName,
+        licensePlate,
+        energyCapacity
+    } = sub_values.events.GetSubject.returnValues;
+    policy+=manufacturer+";"+currentLocation+";"+vehicleType+";"+ownerName+";"+licensePlate+";"+energyCapacity+":";
+
+    let obj_values=await BloomACCRunner.oac_contract.methods.get_cs(objAddress).send({from:BloomACCRunner.accounts[0],gas:500000})
+
+    let {
+        plugType,
+        location,
+        pricingModel,
+        numChargingOutlets,
+        chargingPower,
+        fastCharging
+    } = obj_values.events.GetObject.returnValues;
+
+    policy+=plugType+";"+location+";"+pricingModel+";"+numChargingOutlets+";"+chargingPower+";"+fastCharging+":";
+
+    policy+=read+";"+write+";"+execute+":"+minInterval+";"+startTime+";"+endTime;
+
+    let policy_res=await BloomACCRunner.sendPolicy(policy);
+
+    res.status(200).json({message:policy_res});
 };

@@ -10,9 +10,6 @@ import {
   }
   from 'mdb-react-ui-kit';
 
-
-import {useNavigate } from 'react-router-dom';
-
 function AddEV() {
 
     let [address,setAddress]=useState('');

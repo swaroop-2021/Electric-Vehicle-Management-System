@@ -8,12 +8,12 @@ contract ObjectAttribute {
     // STRUCTS
     struct Object{
         ObjectState state;
-        string plug_type;
+        string plugType;
         string location;
-        string pricing_model;
-        string num_charging_outlets;
-        string charging_power;
-        string fast_charging;
+        string pricingModel;
+        string numChargingOutlets;
+        string chargingPower;
+        string fastCharging;
     }
 
     // VARIABLES
@@ -48,6 +48,7 @@ contract ObjectAttribute {
     // EVENTS
     event NewObjectAdded(address obj_addr, string location);
     event ObjectChanged(address obj_addr);
+    event GetObject(string plugType,string location,string pricingModel,string numChargingOutlets,string chargingPower,string fastCharging);
 
     // FUNCTIONS
     constructor()
@@ -57,7 +58,7 @@ contract ObjectAttribute {
     }
 
     // Adds Object with given attributes:
-    // avg_wait_time, location, avg_charging_time, num_charging_outlet, charging_power, utilization_rate
+    // avg_wait_time, location, avg_charging_time, num_charging_outlet, chargingPower, utilization_rate
     // Emits NewObjectAdded event with obj_addr and location
     function object_add(
         /**OBJECT ATTRIBUTES**/
@@ -71,12 +72,12 @@ contract ObjectAttribute {
         num_objects++;
         objects[obj_addr].state = ObjectState.Active;
         // ADD MAIN ATTRIBS
-        objects[obj_addr].plug_type = obj_arg[0];
+        objects[obj_addr].plugType = obj_arg[0];
         objects[obj_addr].location = obj_arg[1];
-        objects[obj_addr].pricing_model = obj_arg[2];
-        objects[obj_addr].num_charging_outlets = obj_arg[3];
-        objects[obj_addr].charging_power = obj_arg[4];
-        objects[obj_addr].fast_charging = obj_arg[5];
+        objects[obj_addr].pricingModel = obj_arg[2];
+        objects[obj_addr].numChargingOutlets = obj_arg[3];
+        objects[obj_addr].chargingPower = obj_arg[4];
+        objects[obj_addr].fastCharging = obj_arg[5];
         emit NewObjectAdded(obj_addr, objects[obj_addr].location);
     }
 
@@ -140,17 +141,17 @@ contract ObjectAttribute {
         // CHANGE MAIN ATTRIBS
         // Check for empty field, if empty don't change
         bytes memory empty_test = bytes(obj_arg[0]);
-        if (empty_test.length != 0) objects[obj_addr].plug_type = obj_arg[0];
+        if (empty_test.length != 0) objects[obj_addr].plugType = obj_arg[0];
         empty_test = bytes(obj_arg[1]);
         if (empty_test.length != 0) objects[obj_addr].location = obj_arg[1];
         empty_test = bytes(obj_arg[2]);
-        if (empty_test.length != 0) objects[obj_addr].pricing_model = obj_arg[2];
+        if (empty_test.length != 0) objects[obj_addr].pricingModel = obj_arg[2];
         empty_test = bytes(obj_arg[3]);
-        if (empty_test.length != 0) objects[obj_addr].num_charging_outlets = obj_arg[3];
+        if (empty_test.length != 0) objects[obj_addr].numChargingOutlets = obj_arg[3];
         empty_test = bytes(obj_arg[4]);
-        if (empty_test.length != 0) objects[obj_addr].charging_power = obj_arg[4];
+        if (empty_test.length != 0) objects[obj_addr].chargingPower = obj_arg[4];
         empty_test = bytes(obj_arg[5]);
-        if (empty_test.length != 0) objects[obj_addr].fast_charging = obj_arg[5];
+        if (empty_test.length != 0) objects[obj_addr].fastCharging = obj_arg[5];
 
         // Emit event for successful object attribute change 
         emit ObjectChanged(obj_addr);
@@ -166,5 +167,14 @@ contract ObjectAttribute {
         admin_only()
     {
         cs_leaders.push(cs_lead);
+    }
+
+
+    function get_cs(
+        address obj_addr
+    )
+    public
+    {
+        emit GetObject(objects[obj_addr].plugType,objects[obj_addr].location,objects[obj_addr].pricingModel,objects[obj_addr].numChargingOutlets,objects[obj_addr].chargingPower,objects[obj_addr].fastCharging);
     }
 }
