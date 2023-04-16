@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import {
     MDBContainer,
     MDBCard,
     MDBCardBody,
     MDBRow,
     MDBCol,
-    MDBIcon,
     MDBInput
   }
   from 'mdb-react-ui-kit';
 
 
-import {useNavigate } from 'react-router-dom';
 
 function AddCS() {
-    const navigate=useNavigate();
 
     let [address,setAddress]=useState('');
     let [plugType,setPlugType]=useState('');
@@ -29,24 +26,32 @@ function AddCS() {
     const submitDetails=(event)=>{
         event.preventDefault();
 
-        const formData=new FormData();
-        
-        formData.append('address',address);
-        formData.append('plugType',plugType);
-        formData.append('location',location);
-        formData.append('pricingModel',pricingModel);
-        formData.append('numChargingOutlets',numChargingOutlets);
-        formData.append('chargingPower',chargingPower);
-        formData.append('fastCharging',fastCharging);
-
         fetch("http://"+process.env.REACT_APP_API_URL +"/addCS",
         {
             method:"post",
-            body:formData
+            body:JSON.stringify({
+                address:address,
+                plugType:plugType,
+                location:location,
+                pricingModel:pricingModel,
+                numChargingOutlets:numChargingOutlets,
+                chargingPower:chargingPower,
+                fastCharging:fastCharging
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+              }
         })
+        .then(response=>{return response.json()})
         .then(res=>{
-            alert("CS Added Successfully");
-            navigate("/addCS");
+            if(res.message.indexOf("SUCCESS")!==-1)
+            {
+                alert(`CS ${plugType} Added Successfully`);
+                window.location.href="/home";
+            }
+            else{
+                alert(res.message);
+            }
         })
     }
         
@@ -75,7 +80,7 @@ function AddCS() {
 
                         <MDBInput wrapperClass='shadow p-3 mb-5 bg-body rounded' placeholder='Fast Charging' id='fastCharging' type='text' size="lg" required value={fastCharging} onChange={(e)=>{setFastCharging(e.target.value)}}/>
 
-                        <button className="mb-4 px-5 btn btn-primary" id="submit" size='lg' onClick={submitDetails}>Create EV</button>
+                        <button className="mb-4 px-5 btn btn-primary" id="submit" size='lg' onClick={submitDetails}>Create CS</button>
 
                     </MDBCol>
                 </MDBRow>

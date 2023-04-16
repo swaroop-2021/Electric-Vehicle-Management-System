@@ -15,11 +15,11 @@ function NavigationBar() {
                         <LinkContainer to="/home"> 
                             <Nav.Link>Home</Nav.Link> 
                         </LinkContainer>
-                        {console.log((localStorage.getItem("token"))[0])}
+                        {console.log(JSON.parse(localStorage.getItem("token")))}
                         {
                         localStorage.getItem("token") ? 
                             <>
-                                { (localStorage.getItem("token")).role==="admin" ? 
+                                { JSON.parse(localStorage.getItem("token")).role==="admin" ? 
                                 
                                 <>
                                     <LinkContainer to="/addEV"> 

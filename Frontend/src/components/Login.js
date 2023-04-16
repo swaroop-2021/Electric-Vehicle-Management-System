@@ -38,7 +38,7 @@ function Login() {
       console.log(res);
       if(res.status===true){
         alert("Login SuccessFull");
-        localStorage.setItem("token",res);
+        localStorage.setItem("token",JSON.stringify(res));
         window.location.href="/connectSystem";
       }
       else{

@@ -51,7 +51,7 @@ exports.connectExistingSystem = (req,res,next)=>{
     BloomACCRunner.connect_bloomacc();
 };
 
-exports.addEV = (req,res,next)=>{
+exports.addEV = async(req,res,next)=>{
     // console.log(req.body);
     let{
         address,
@@ -65,10 +65,11 @@ exports.addEV = (req,res,next)=>{
 
     let a="";
     let info=a.concat(manufacturer,";",currentLocation,";",vehicleType,";",ownerName,";",licensePlate,";",energyCapacity)
-    BloomACCRunner.sendSubject(address,info,BloomACCRunner.ev_manufacturer[BloomACCRunner.ev_manufacturer.length - 1]);
+    let message=await BloomACCRunner.sendSubject(address,info,BloomACCRunner.ev_manufacturer[BloomACCRunner.ev_manufacturer.length - 1]);
+    res.status(200).json({message:message})
 };
 
-exports.addCS= (req,res,next)=>{
+exports.addCS= async(req,res,next)=>{
     let {address,
         plugType,
         location,
@@ -82,7 +83,8 @@ exports.addCS= (req,res,next)=>{
 
     let info=a.concat(plugType,";",location,";",pricingModel,";",numChargingOutlets,";",chargingPower,";",fastCharging);
     
-    BloomACCRunner.sendObject(address,info,BloomACCRunner.cs_leader[BloomACCRunner.cs_leader.length - 1]);
+    let message=await BloomACCRunner.sendObject(address,info,BloomACCRunner.cs_leader[BloomACCRunner.cs_leader.length - 1]);
+    res.status(200).json({message:message})
 };
 
 exports.accessControl = (req,res,next)=>{
@@ -90,5 +92,15 @@ exports.accessControl = (req,res,next)=>{
 };
 
 exports.addPolicy = (req,res,next)=>{
+    let {sub_address,
+        obj_address,
+        read,
+        write,
+        execute,
+        min_interval,
+        start_time,
+        end_time
+    } = req.body;
+
     
 };

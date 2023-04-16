@@ -477,11 +477,13 @@ class BloomACCRunner {
         // console.log(info.split(";"));
         await this.w3.eth.personal.unlockAccount(evMan,"",999999);
     
-        const tx = await this.sac_contract.methods.subject_add(subAddr,info.split(";") ).send({ from: evMan,gas: 500000});
+        const tx = await this.sac_contract.methods.subject_add(subAddr,info.split(";") ).send({ from: this.admin,gas: 500000});
         console.log(`[SUCCESS] Added subject ${info.split(';')[0]}`);
+        return `[SUCCESS] Added subject ${info.split(';')[0]}`;
     } catch (err) {
         console.log(err);
         console.log("[ERROR] Remember to add EV Manufacturers to Subject Contract!");
+        return "[ERROR] Remember to add EV Manufacturers to Subject Contract!";
     }
   }
 
@@ -510,13 +512,15 @@ class BloomACCRunner {
     try {
         // console.log(info.split(";"));
         await this.w3.eth.personal.unlockAccount(csLead,"",999999);
-    
-        const tx = await this.oac_contract.methods.object_add(obAddr,info.split(";")).send({ from: csLead,gas: 500000});
+        console.log(obAddr,info);
+        const tx = await this.oac_contract.methods.object_add(obAddr,info.split(";")).send({ from: this.admin,gas: 500000});
         // const tx1 = await this.oac_contract.methods.object_add(obAddr, info.split(";")).send({ from: csLead});
         console.log(`[SUCCESS] Added object ${info.split(';')[0]}`);
+        return `[SUCCESS] Added object ${info.split(';')[0]}`
     } catch (err) {
         console.log(err);
         console.log("[ERROR] Remember to add CS Leaders to Object Contract!");
+        return "[ERROR] Remember to add CS Leaders to Object Contract!";
     }
   }
   
@@ -548,7 +552,7 @@ class BloomACCRunner {
     policy = policy.split(":");
     if (policy.length !== 4) {
       console.log("[ERROR] INVALID POLICY. MAKE SURE POLICY HAS 4 PARTS.");
-      return;
+      return "[ERROR] INVALID POLICY. MAKE SURE POLICY HAS 4 PARTS.";
     }
   
     for (let i = 0; i < 4; i++) {
@@ -580,6 +584,7 @@ class BloomACCRunner {
           \t${policy[2]}\n
           \t${policy[3]}\n`
       );
+    return "[SUCCESS] Policy Added";
   }
 
   async access_control(sub_addr,obj_addr,action,location) {

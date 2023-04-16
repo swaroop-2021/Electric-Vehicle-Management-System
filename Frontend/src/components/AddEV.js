@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import {
     MDBContainer,
     MDBCard,
     MDBCardBody,
     MDBRow,
     MDBCol,
-    MDBIcon,
     MDBInput
   }
   from 'mdb-react-ui-kit';
@@ -15,7 +14,6 @@ import {
 import {useNavigate } from 'react-router-dom';
 
 function AddEV() {
-    const navigate=useNavigate();
 
     let [address,setAddress]=useState('');
     let [manufacturer,setManufacturer]=useState('');
@@ -28,16 +26,6 @@ function AddEV() {
 
     const submitDetails=(event)=>{
         event.preventDefault();
-
-        const formData=new FormData();
-        
-        formData.append('address',address);
-        formData.append('manufacturer',manufacturer);
-        formData.append('currentLocation',currentLocation);
-        formData.append('vehicleType',vehicleType);
-        formData.append('ownerName',ownerName);
-        formData.append('licensePlate',licensePlate);
-        formData.append('energyCapacity',energyCapacity);
 
         fetch("http://"+process.env.REACT_APP_API_URL +"/addEV",
         {
@@ -53,9 +41,16 @@ function AddEV() {
                 'Content-type': 'application/json; charset=UTF-8',
               }
         })
+        .then(response=>{return response.json()})
         .then(res=>{
-            alert("EV Added Successfully");
-            navigate("/addEV");
+            if(res.message.indexOf("SUCCESS")!==-1)
+            {
+                alert(`EV ${manufacturer} Added Successfully`);
+                window.location.href="/home";
+            }
+            else{
+                alert(res.message);
+            }
         })
     }
         
