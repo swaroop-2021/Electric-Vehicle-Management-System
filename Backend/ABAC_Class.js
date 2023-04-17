@@ -92,7 +92,7 @@ class BloomACCRunner {
       return;
     }
     this.accounts = await this.w3.eth.getAccounts();
-    await this.w3.eth.personal.unlockAccount(this.accounts[0],"",9999999);
+    await this.w3.eth.personal.unlockAccount(this.accounts[0],"node1",9999999);
     
     // Get total supply of token
     const numToken = 1000;
@@ -306,13 +306,13 @@ class BloomACCRunner {
     fs.writeFileSync("./Artifacts/PolicyManagement.contract",`${this.pmc_address}\n${JSON.stringify(this.pmc_abi)}`);
     fs.writeFileSync("./Artifacts/SubjectAttribute.contract",`${this.sac_address}\n${JSON.stringify(this.sac_abi)}`);
 
-    await this.w3.eth.personal.unlockAccount(this.accounts[0],"",999999);
+    await this.w3.eth.personal.unlockAccount(this.accounts[0],"node1",999999);
     
     await this.setAccessToken();
     await this.addCsLeader();
     await this.addEvManufacturer();
 
-    await this.w3.eth.personal.unlockAccount(this.accounts[0],"",999999);
+    await this.w3.eth.personal.unlockAccount(this.accounts[0],"node1",999999);
     
     await this.addSubject();
     await this.addObject();
@@ -601,7 +601,7 @@ class BloomACCRunner {
       const amountToSend = this.w3.utils.toWei('100', 'ether');  // Replace with the amount you want to send
 
       // Send the transaction
-      await this.w3.eth.personal.unlockAccount(this.ev_manufacturer[this.ev_manufacturer.length - 1],"",999999);
+      await this.w3.eth.personal.unlockAccount(this.ev_manufacturer[this.ev_manufacturer.length - 1],"node1",999999);
       await this.w3.eth.sendTransaction({
           from: this.admin,
           to: this.ev_manufacturer[this.ev_manufacturer.length - 1],
@@ -621,7 +621,7 @@ class BloomACCRunner {
 
       // Send the transaction
 
-      await this.w3.eth.personal.unlockAccount(sub_addr,"",999999);
+      await this.w3.eth.personal.unlockAccount(sub_addr,"node1",999999);
       await this.w3.eth.sendTransaction({
           from: this.admin,
           to: sub_addr,
@@ -629,7 +629,7 @@ class BloomACCRunner {
       });
       const tx=await this.acc_contract.methods.access_control(obj_addr, action).send({from:sub_addr,gas:500000});
       console.log(tx.events);
-      if(tx.events.AccessDenied !== null || tx.events.AccessDenied !== undefined){
+      if(tx.events.indexOf(AccessDenied) !==-1){
         return `${tx.events.AccessDenied.returnValues.message}`;
       }
       return`${tx.events.AccessGranted.returnValues.message}`;
