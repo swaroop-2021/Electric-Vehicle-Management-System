@@ -6,8 +6,8 @@ const Web3=require("web3");
 
 class BloomACCRunner {
   // Class Variables
-  GANACHE_URL = "HTTP://127.0.0.1:7545";
-  CHAIN_ID = 5777;
+  GANACHE_URL = "HTTP://127.0.0.1:8545";
+  CHAIN_ID = 4321;
 
   constructor() {
     // Instance Variables
@@ -152,7 +152,7 @@ class BloomACCRunner {
         let contractAddress;
         await contractInsatnce.deploy(options).send({
             from: this.admin,
-            gas:abc
+            gas:10000000
         }).then((instance_)=>{
             // console.log(instance_)
             contractAddress=instance_.options.address;
@@ -316,7 +316,7 @@ class BloomACCRunner {
     
     await this.addSubject();
     await this.addObject();
-    await this.addPolicy();
+    // await this.addPolicy();
 
     await this.signUp(this.admin,"admin@gmail.com","admin","admin");
 }
@@ -416,8 +416,8 @@ class BloomACCRunner {
       this.evtoken_address
     );
     console.log("[SUCCESS] Connected to deployed network...");
-    await this.access_control(this.subjects[0],this.objects[0],0,"Charge Point, 3650 Airport");    
-    await this.access_control(this.subjects[0],this.objects[0],0,"Charge Point, 3650 Airport");    
+    await this.access_control(this.subjects[0],this.objects[0],0,(await this.oac_contract.methods.get_cs(this.objects[0]).send({from:this.admin,gas:500000})).events.GetObject.returnValues.location);
+    await this.access_control(this.subjects[0],this.objects[0],0,(await this.oac_contract.methods.get_cs(this.objects[0]).send({from:this.admin,gas:500000})).events.GetObject.returnValues.location);
   }
 
   async setAccessToken(){
@@ -476,8 +476,6 @@ class BloomACCRunner {
   async sendSubject(subAddr, info, evMan) {
     try {
         // console.log(info.split(";"));
-        await this.w3.eth.personal.unlockAccount(evMan,"",999999);
-    
         const tx = await this.sac_contract.methods.subject_add(subAddr,info.split(";") ).send({ from: this.admin,gas: 500000});
         console.log(`[SUCCESS] Added subject ${info.split(';')[0]}`);
         return `[SUCCESS] Added subject ${info.split(';')[0]}`;
@@ -512,7 +510,7 @@ class BloomACCRunner {
     // A helper function to send transaction for adding a new object
     try {
         // console.log(info.split(";"));
-        await this.w3.eth.personal.unlockAccount(csLead,"",999999);
+        
         console.log(obAddr,info);
         const tx = await this.oac_contract.methods.object_add(obAddr,info.split(";")).send({ from: this.admin,gas: 500000});
         // const tx1 = await this.oac_contract.methods.object_add(obAddr, info.split(";")).send({ from: csLead});
@@ -599,46 +597,46 @@ class BloomACCRunner {
     action=parseInt(action);
     const attrib_list = ["", location, "", "", "", ""];
   
-    const nonce = await this.w3.eth.getTransactionCount(this.ev_manufacturer[this.ev_manufacturer.length - 1]);
     try {
-      // const tx = {
-      //   to: this.sac_contract.options.address,
-      //   data: this.sac_contract.methods.change_attribs(sub_addr, attrib_list).encodeABI(),
-      //   chainId: this.CHAIN_ID,
-      //   from: this.ev_manufacturer[this.ev_manufacturer.length - 1],
-      //   nonce: nonce,
-      //   gas:500000
-      // };
-      // const signedTx = await this.w3.eth.accounts.signTransaction(tx, "8a9f572ce0cb9e6b66716b4b2b96a0d59c7e708000f73f4e61d5c3dd2d596e9c");
-      // const tx_receipt = await this.w3.eth.sendSignedTransaction(signedTx.rawTransaction);
+      const amountToSend = this.w3.utils.toWei('100', 'ether');  // Replace with the amount you want to send
+
+      // Send the transaction
+      await this.w3.eth.personal.unlockAccount(this.ev_manufacturer[this.ev_manufacturer.length - 1],"",999999);
+      await this.w3.eth.sendTransaction({
+          from: this.admin,
+          to: this.ev_manufacturer[this.ev_manufacturer.length - 1],
+          value: amountToSend
+      });
       const tx =await this.sac_contract.methods.change_attribs(sub_addr,attrib_list).send({from:this.ev_manufacturer[this.ev_manufacturer.length - 1],gas:500000})
       console.log("Sent current location...");
-      console.log(tx);
+      // console.log(tx);
     } catch (err) {
-      // console.log(`[ERROR] Subject with address (0x...${sub_addr.slice(-4)}) does not exist.\nOr ${err}\nOr make sure you have permissions to change attributes...`);
-      return;
+      console.log(`[ERROR] Subject with address (0x...${sub_addr.slice(-4)}) does not exist.\nOr ${err}\nOr make sure you have permissions to change attributes...`);
+      return `${err}`;
     }
   
-    const nonce2 = await this.w3.eth.getTransactionCount(sub_addr);
     try{
-    // const tx2 = {
-    //   to: this.acc_contract.options.address,
-    //   data: this.acc_contract.methods.access_control(obj_addr, action).encodeABI(),
-    //   chainId: this.CHAIN_ID,
-    //   from: sub_addr,
-    //   nonce: nonce2,
-    //   gas:500000
-    // };
-    // const signedTx2 = await this.w3.eth.accounts.signTransaction(tx2, "300290e3b8f2ad46a80d7d158f4c0efac8b6a2e0f7ad90b52ae26731eaa0de07");
-    // const tx_receipt2 = await this.w3.eth.sendSignedTransaction(signedTx2.rawTransaction);
-    // console.log(`Sent access request for subject address: 0x...${sub_addr.slice(-4)}, object address: 0x...${obj_addr.slice(-4)} and action: ${action}`);
-    // console.log(tx_receipt2.logs);
+      
+      const amountToSend = this.w3.utils.toWei('100', 'ether');  // Replace with the amount you want to send
+
+      // Send the transaction
+
+      await this.w3.eth.personal.unlockAccount(sub_addr,"",999999);
+      await this.w3.eth.sendTransaction({
+          from: this.admin,
+          to: sub_addr,
+          value: amountToSend
+      });
       const tx=await this.acc_contract.methods.access_control(obj_addr, action).send({from:sub_addr,gas:500000});
       console.log(tx.events);
+      if(tx.events.AccessDenied){
+        return `${tx.events.AccessDenied.returnValues.message}`;
+      }
+      return`${tx.events.AccessGranted.returnValues.message}`;
     }
     catch(err){
       console.log(`[ERROR] Subject with address (0x...${sub_addr.slice(-4)}) does not exist.\nOr ${err}\nOr make sure you have permissions to change attributes...`);
-      return;
+      return `${err}`;
     }
   }
 

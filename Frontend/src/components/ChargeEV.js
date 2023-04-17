@@ -10,7 +10,7 @@ import {
   }
   from 'mdb-react-ui-kit';
 
-function AccessControl() {
+function ChargeEV() {
 
     let [subAddress,setSubAddress]=useState('');
     let [objAddress,setObjAddress]=useState('');
@@ -19,7 +19,7 @@ function AccessControl() {
     const submitDetails=(event)=>{
         event.preventDefault();
 
-        fetch("http://"+process.env.REACT_APP_API_URL +"/accessControl",
+        fetch("http://"+process.env.REACT_APP_API_URL +"/chargeEV",
         {
             method:"post",
             body:JSON.stringify({
@@ -31,8 +31,12 @@ function AccessControl() {
                 'Content-type': 'application/json; charset=UTF-8',
               }
         })
+        .then(r=>{return r.json()})
         .then(res=>{
-            alert("Access Control Added Successfully");
+            alert(res.message);
+            if(res.message.indexOf("SUCCESS")!==-1){
+                window.location.href="/home";
+            }
         })
     }
         
@@ -47,9 +51,9 @@ function AccessControl() {
                     <MDBCol md='6'>
                         <MDBCardBody className=' d-flex flex-column'></MDBCardBody>
 
-                        <MDBInput wrapperClass='shadow p-3 mb-5 bg-body rounded' placeholder='Subject Address' id='subAddress' type='text' size="lg" required value={objAddress} onChange={(e)=>{setSubAddress(e.target.value)}}/>
+                        <MDBInput wrapperClass='shadow p-3 mb-5 bg-body rounded' placeholder='Subject Address' id='subAddress' type='text' size="lg" required value={subAddress} onChange={(e)=>{setSubAddress(e.target.value)}}/>
                         
-                        <MDBInput wrapperClass='shadow p-3 mb-5 bg-body rounded' placeholder='Object Address' id='objAddress' type='text' size="lg" required value={subAddress} onChange={(e)=>{setObjAddress(e.target.value)}}/>
+                        <MDBInput wrapperClass='shadow p-3 mb-5 bg-body rounded' placeholder='Object Address' id='objAddress' type='text' size="lg" required value={objAddress} onChange={(e)=>{setObjAddress(e.target.value)}}/>
 
                         <MDBInput wrapperClass='shadow p-3 mb-5 bg-body rounded' placeholder='Action' id='action' type='text' size="lg" required value={action} onChange={(e)=>{setAction(e.target.value)}}/>
 
@@ -65,4 +69,4 @@ function AccessControl() {
     
 }
 
-export default AccessControl;
+export default ChargeEV;

@@ -8,12 +8,13 @@ import Login from './components/Login';
 import SignUp from './components/Signup';
 import Home from './components/Home';
 import Logout from './components/Logout';
-import AccessControl from './components/AccessControl';
+import ChargeEV from './components/ChargeEV';
 import ConnectSystem from './components/ConnectSystem';
 import AddEV from './components/AddEV';
 import AddCS from './components/AddCS';
 import AddPolicy from './components/AddPolicy';
 function App() {
+  
   return (
     
     <Router>
@@ -29,7 +30,7 @@ function App() {
           <Route exact path='/addEV' element={<AddEV/>}></Route>
           <Route exact path='/addCS' element={<AddCS/>}></Route>
           <Route exact path='/addPolicy' element={<AddPolicy/>}></Route>
-          <Route exact path='/accessControl' element={<AccessControl/>}></Route>
+          <Route exact path='/chargeEV' element={<ChargeEV/>}></Route>
           <Route exact path='/connectSystem' element={<ConnectSystem/>}></Route>
       </Routes>
 

@@ -43,12 +43,14 @@ exports.signup = async(req,res,next)=>{
     res.status(200).json({message:message,status:status});
 };
 
-exports.depolyNewSystem = (req,res,next)=>{
-    BloomACCRunner.deploy_bloomacc();
+exports.depolyNewSystem = async(req,res,next)=>{
+    await BloomACCRunner.deploy_bloomacc();
+    res.status(200).json({status:true});
 };
 
-exports.connectExistingSystem = (req,res,next)=>{
-    BloomACCRunner.connect_bloomacc();
+exports.connectExistingSystem = async(req,res,next)=>{
+    await BloomACCRunner.connect_bloomacc();
+    res.status(200).json({status:true});
 };
 
 exports.addEV = async(req,res,next)=>{
@@ -87,8 +89,18 @@ exports.addCS= async(req,res,next)=>{
     res.status(200).json({message:message})
 };
 
-exports.accessControl = (req,res,next)=>{
-    
+exports.accessControl = async(req,res,next)=>{
+    let { subAddress,
+        objAddress,
+        action
+    } = req.body;
+    action=parseInt(action);
+    console.log(subAddress,
+        objAddress,
+        action);
+    let message=await BloomACCRunner.access_control(subAddress,objAddress,action,(await BloomACCRunner.oac_contract.methods.get_cs(objAddress).send({from:BloomACCRunner.admin,gas:500000})).events.GetObject.returnValues.location);
+
+    res.status(200).json({message:message});
 };
 
 exports.addPolicy = async(req,res,next)=>{
@@ -101,6 +113,9 @@ exports.addPolicy = async(req,res,next)=>{
         startTime,
         endTime
     } = req.body;
+    console.log(minInterval,
+        startTime,
+        endTime);
 
     let sub_values=await BloomACCRunner.sac_contract.methods.get_ev(subAddress).send({from:BloomACCRunner.accounts[0],gas:500000})
 
@@ -114,10 +129,9 @@ exports.addPolicy = async(req,res,next)=>{
         licensePlate,
         energyCapacity
     } = sub_values.events.GetSubject.returnValues;
-    policy+=manufacturer+";"+currentLocation+";"+vehicleType+";"+ownerName+";"+licensePlate+";"+energyCapacity+":";
-
+    
     let obj_values=await BloomACCRunner.oac_contract.methods.get_cs(objAddress).send({from:BloomACCRunner.accounts[0],gas:500000})
-
+    
     let {
         plugType,
         location,
@@ -126,7 +140,8 @@ exports.addPolicy = async(req,res,next)=>{
         chargingPower,
         fastCharging
     } = obj_values.events.GetObject.returnValues;
-
+    
+    policy+=manufacturer+";"+location+";"+vehicleType+";"+ownerName+";"+licensePlate+";"+energyCapacity+":";
     policy+=plugType+";"+location+";"+pricingModel+";"+numChargingOutlets+";"+chargingPower+";"+fastCharging+":";
 
     policy+=read+";"+write+";"+execute+":"+minInterval+";"+startTime+";"+endTime;

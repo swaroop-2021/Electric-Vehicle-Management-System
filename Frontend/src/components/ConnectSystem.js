@@ -1,13 +1,20 @@
 import React from 'react';
-import navigate from 'react';
+import { useEffect } from 'react';
 
 function ConnectSystem() {
+
+  useEffect(()=>{
+    if(JSON.parse(localStorage.getItem("connectSystem"))===true){
+      window.location.href="/home";
+    }
+  })
 
   const deploy_new_system=(event)=>{
     fetch("http://"+process.env.REACT_APP_API_URL +"/deploy_new_system",
     {method:"get"})
     .then(res=>{
-      return res;
+      localStorage.setItem("connectSystem",true);
+      window.location.href="/home";
     })
   }
 
@@ -15,7 +22,8 @@ function ConnectSystem() {
     fetch("http://"+process.env.REACT_APP_API_URL +"/connect_existing_system",
     {method:"get"})
     .then(res=>{
-      navigate("/");
+      localStorage.setItem("connectSystem",true);
+      window.location.href="/home";
     })
   }
 
