@@ -629,7 +629,7 @@ class BloomACCRunner {
       });
       const tx=await this.acc_contract.methods.access_control(obj_addr, action).send({from:sub_addr,gas:500000});
       console.log(tx.events);
-      if(tx.events.AccessDenied){
+      if(tx.events.AccessDenied !== null || tx.events.AccessDenied !== undefined){
         return `${tx.events.AccessDenied.returnValues.message}`;
       }
       return`${tx.events.AccessGranted.returnValues.message}`;
