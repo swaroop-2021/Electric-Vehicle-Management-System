@@ -1,0 +1,29 @@
+/* NavigationBar.css */
+
+/* Change the background color of the navbar */
+.navbar {
+    background-color: #f0f0f0;
+}
+
+/* Change the color and font-weight of the navbar links */
+.nav-link {
+    color: #333;
+    font-weight: bold;
+}
+
+/* Change the color and font-weight of the active navbar link */
+.nav-link.active {
+    color: #007bff;
+}
+
+/* Add some margin and padding to the logo image */
+.navbar-brand img {
+    margin-right: 10px;
+    padding: 5px;
+}
+
+/* Add some hover effects to the register button */
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}

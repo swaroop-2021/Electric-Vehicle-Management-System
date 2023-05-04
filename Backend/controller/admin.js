@@ -98,7 +98,8 @@ exports.accessControl = async(req,res,next)=>{
     console.log(subAddress,
         objAddress,
         action);
-    let message=await BloomACCRunner.access_control(subAddress,objAddress,action,(await BloomACCRunner.oac_contract.methods.get_cs(objAddress).send({from:BloomACCRunner.admin,gas:500000})).events.GetObject.returnValues.location);
+    let loc=(await BloomACCRunner.oac_contract.methods.get_cs(objAddress).send({from:BloomACCRunner.admin,gas:500000})).events.GetObject.returnValues.location;
+    let message=await BloomACCRunner.access_control(subAddress,objAddress,action,loc);
 
     res.status(200).json({message:message});
 };
@@ -140,6 +141,7 @@ exports.addPolicy = async(req,res,next)=>{
         chargingPower,
         fastCharging
     } = obj_values.events.GetObject.returnValues;
+    // endTime= ((new  Date("1970-01-01")-new Date())/1000)+endTime;
     
     policy+=manufacturer+";"+location+";"+vehicleType+";"+ownerName+";"+licensePlate+";"+energyCapacity+":";
     policy+=plugType+";"+location+";"+pricingModel+";"+numChargingOutlets+";"+chargingPower+";"+fastCharging+":";

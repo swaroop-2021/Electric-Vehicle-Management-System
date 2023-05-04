@@ -335,7 +335,7 @@ class BloomACCRunner {
     }
 
     this.accounts = await this.w3.eth.getAccounts();
-
+    await this.w3.eth.personal.unlockAccount(this.accounts[0],"node1",9999999);
     // Setting player addresses
     console.log("[PROCESSING] Setting players...");
     this.admin = this.accounts[0];
@@ -602,11 +602,11 @@ class BloomACCRunner {
 
       // Send the transaction
       await this.w3.eth.personal.unlockAccount(this.ev_manufacturer[this.ev_manufacturer.length - 1],"node1",999999);
-      await this.w3.eth.sendTransaction({
-          from: this.admin,
-          to: this.ev_manufacturer[this.ev_manufacturer.length - 1],
-          value: amountToSend
-      });
+      // await this.w3.eth.sendTransaction({
+      //     from: this.admin,
+      //     to: this.ev_manufacturer[this.ev_manufacturer.length - 1],
+      //     value: amountToSend
+      // });
       const tx =await this.sac_contract.methods.change_attribs(sub_addr,attrib_list).send({from:this.ev_manufacturer[this.ev_manufacturer.length - 1],gas:500000})
       console.log("Sent current location...");
       // console.log(tx);
@@ -622,14 +622,14 @@ class BloomACCRunner {
       // Send the transaction
 
       await this.w3.eth.personal.unlockAccount(sub_addr,"node1",999999);
-      await this.w3.eth.sendTransaction({
-          from: this.admin,
-          to: sub_addr,
-          value: amountToSend
-      });
+      // await this.w3.eth.sendTransaction({
+      //     from: this.admin,
+      //     to: sub_addr,
+      //     value: amountToSend
+      // });
       const tx=await this.acc_contract.methods.access_control(obj_addr, action).send({from:sub_addr,gas:500000});
       console.log(tx.events);
-      if(tx.events.indexOf(AccessDenied) !==-1){
+      if(tx.events.AccessDenied !==undefined){
         return `${tx.events.AccessDenied.returnValues.message}`;
       }
       return`${tx.events.AccessGranted.returnValues.message}`;
